@@ -1,0 +1,15 @@
+model:
+  fc_dim_branch: 512
+  fc_dim: 512
+  N_layer: 3
+  n_head: 1
+
+train:
+  epochs: 2000
+  coor_sampling_size: 300
+  batchsize: 10
+  coor_sampling_freq: 3
+  base_lr: 0.0001
+  visual_freq: 50
+  weight_bc: 20
+  weight_pde: 1
