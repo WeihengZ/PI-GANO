@@ -23,7 +23,7 @@ os.environ['TORCH_USE_CUDA_DSA'] = "1"
 # define arguements
 parser = argparse.ArgumentParser(description='command setting')
 parser.add_argument('--phase', type=str, default='train')
-parser.add_argument('--data', type=str, default='plate_dis_DG_low')
+parser.add_argument('--data', type=str, default='plate_stress_DG')
 parser.add_argument('--model', type=str, default='GANO')
 parser.add_argument('--geo_node', type=str, default='vary_bound_sup', choices=['vary_bound_sup'])
 

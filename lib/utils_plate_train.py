@@ -27,7 +27,7 @@ def val(model, loader, args, device, num_nodes_list):
     for (par, coors, u, v, flag, par_flag) in loader:
 
         # extract domain shape information
-        if args.geo_node == 'vary_bound':
+        if args.geo_node == 'vary_bound' or 'vary_bound_sup':
             ss_index = np.arange(max_pde_nodes + max_par_nodes + max_bcy_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
         if args.geo_node == 'all_bound':
             ss_index = np.arange(max_pde_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
@@ -73,7 +73,7 @@ def test(model, loader, args, device, num_nodes_list, dir):
     for (par, coors, u, v, flag, par_flag) in loader:
 
         # extract domain shape information
-        if args.geo_node == 'vary_bound':
+        if args.geo_node == 'vary_bound' or 'vary_bound_sup':
             ss_index = np.arange(max_pde_nodes + max_par_nodes + max_bcy_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
         if args.geo_node == 'all_bound':
             ss_index = np.arange(max_pde_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
@@ -215,7 +215,7 @@ def train(args, config, model, device, loaders, num_nodes_list, params):
 
     # move the model to the defined device
     try:
-        model.load_state_dict(torch.load(r'./saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))  
+        model.load_state_dict(torch.load(r'./res/saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))  
     except:
         print('No trained models') 
     model = model.to(device)
@@ -238,7 +238,7 @@ def train(args, config, model, device, loaders, num_nodes_list, params):
             # show the performance improvement
             if e % vf == 0:
                 model.eval()
-                err = val(model, val_loader, num_nodes_list)
+                err = val(model, val_loader, args, device, num_nodes_list)
                 err_hist.append(err)
                 print('Current epoch error:', err)
                 print('current epochs pde loss:', avg_pde_loss)
@@ -288,7 +288,7 @@ def train(args, config, model, device, loaders, num_nodes_list, params):
                     bcxy_flag = bcxy_flag.float().to(device)    # (B, max_bcxy)
 
                     # extract the boundary of the varying shape
-                    if args.geo_node == 'vary_bound':
+                    if args.geo_node == 'vary_bound' or 'vary_bound_sup':
                         ss_index = np.arange(max_pde_nodes + max_par_nodes + max_bcy_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
                     if args.geo_node == 'all_bound':
                         ss_index = np.arange(max_pde_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
@@ -344,8 +344,8 @@ def train(args, config, model, device, loaders, num_nodes_list, params):
     # final test
     model.load_state_dict(torch.load(r'./res/saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))   
     model.eval()
-    err = test(model, test_loader, num_nodes_list, dir='x')
-    _ = test(model, test_loader, num_nodes_list, dir='y')
+    err = test(model, test_loader, args, device, num_nodes_list, dir='x')
+    _ = test(model, test_loader, args, device, num_nodes_list, dir='y')
     print('Best L2 relative error on test loader:', err)
 
 
@@ -380,7 +380,7 @@ def sup_train(args, config, model, device, loaders, num_nodes_list, params):
 
     # move the model to the defined device
     try:
-        model.load_state_dict(torch.load(r'./saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))  
+        model.load_state_dict(torch.load(r'./res/saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))  
     except:
         print('No trained models') 
     model = model.to(device)
@@ -397,7 +397,7 @@ def sup_train(args, config, model, device, loaders, num_nodes_list, params):
             # show the performance improvement
             if e % vf == 0:
                 model.eval()
-                err = val(model, val_loader, num_nodes_list)
+                err = val(model, val_loader, args, device, num_nodes_list)
                 err_hist.append(err)
                 print('Current epoch error:', err)
                 print('current epochs pde loss:', avg_pde_loss)
@@ -460,6 +460,6 @@ def sup_train(args, config, model, device, loaders, num_nodes_list, params):
     # final test
     model.load_state_dict(torch.load(r'./res/saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model)))   
     model.eval()
-    err = test(model, test_loader, num_nodes_list, dir='x')
-    _ = test(model, test_loader, num_nodes_list, dir='y')
+    err = test(model, test_loader, args, device, num_nodes_list, dir='x')
+    _ = test(model, test_loader, args, device, num_nodes_list, dir='y')
     print('Best L2 relative error on test loader:', err)

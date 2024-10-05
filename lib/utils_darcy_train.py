@@ -213,11 +213,7 @@ def train(args, config, model, device, loaders, num_nodes_list):
             # show the performance improvement
             if e % vf == 0:
                 model.eval()
-                err = val(model, val_loader)
-                err_hist.append(err)
-                plt.figure()
-                plt.plot(err_hist)
-                plt.savefig(r'./res/logs/err_hist_{}_{}'.format(args.data, args.model))
+                err = val(model, val_loader, device, args, num_nodes_list)
                 print('Current epoch error:', err)
                 print('current epochs pde loss:', avg_pde_loss, 'bc loss:', avg_bc_loss)
 
@@ -287,7 +283,7 @@ def train(args, config, model, device, loaders, num_nodes_list):
     # final test
     model.load_state_dict(torch.load(r'./res/saved_models/best_model_{}_{}_{}.pkl'.format(args.geo_node, args.data, args.model), map_location=device))   
     model.eval()
-    err = test(model, test_loader)
+    err = test(model, test_loader, device, args, num_nodes_list)
     print('Best L2 relative error on test loader:', err)
 
 # define the supervised training function
@@ -337,10 +333,6 @@ def sup_train(args, config, model, device, loaders, num_nodes_list):
             if e % vf == 0:
                 model.eval()
                 err = val(model, val_loader, device, args, num_nodes_list)
-                err_hist.append(err)
-                plt.figure()
-                plt.plot(err_hist)
-                plt.savefig(r'./res/logs/err_hist_{}_{}'.format(args.data, args.model))
                 print('Current epoch error:', err)
                 print('current epochs pde loss:', avg_pde_loss, 'bc loss:', avg_bc_loss)
 
