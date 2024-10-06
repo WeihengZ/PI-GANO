@@ -236,7 +236,13 @@ class GANO(nn.Module):
         self.FC3v = nn.Linear(2*config['model']['fc_dim'], 2*config['model']['fc_dim'])
         self.FC4v = nn.Linear(2*config['model']['fc_dim'], 2*config['model']['fc_dim'])
         self.FC5v = nn.Linear(2*config['model']['fc_dim'], 1)
-        
+    
+    def predict_geometry_embedding(self, x_coor, y_coor, par, par_flag, shape_coor, shape_flag):
+
+        Domain_enc = self.DG(shape_coor, shape_flag)    # (B,1,F)
+
+        return Domain_enc
+  
     def forward(self, x_coor, y_coor, par, par_flag, shape_coor, shape_flag):
         '''
         par: (B, M', 3)

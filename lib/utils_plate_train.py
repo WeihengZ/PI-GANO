@@ -183,6 +183,46 @@ def test(model, loader, args, device, num_nodes_list, dir):
 
     return mean_relative_L2
 
+# function of extracting the geometry embeddings
+def get_geometry_embeddings(model, loader, args, device, num_nodes_list):
+
+    # transforme state to be eval
+    model.eval()
+
+    # get number of nodes of different type
+    max_pde_nodes, max_bcxy_nodes, max_bcy_nodes, max_par_nodes = num_nodes_list
+
+    # forward to get the embeddings
+    all_geo_embeddings = []
+    for (par, coors, u, v, flag, par_flag) in loader:
+
+        # extract domain shape information
+        if args.geo_node == 'vary_bound' or 'vary_bound_sup':
+            ss_index = np.arange(max_pde_nodes + max_par_nodes + max_bcy_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
+        if args.geo_node == 'all_bound':
+            ss_index = np.arange(max_pde_nodes, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
+        if args.geo_node == 'all_domain':
+            ss_index = np.arange(0, max_pde_nodes + max_par_nodes + max_bcy_nodes + max_bcxy_nodes)
+        shape_coors = coors[:, ss_index, :].float().to(device)    # (B, max_bcxy, 2)
+        shape_flag = flag[:, ss_index]
+        shape_flag = shape_flag.float().to(device)    # (B, max_bcxy)
+
+        # prepare the data
+        par = par.float().to(device)
+        par_flag = par_flag.float().to(device)
+        coors = coors.float().to(device)
+        u = u.float().to(device)
+        v = v.float().to(device)
+        flag = flag.float().to(device)
+
+        # model forward
+        Geo_embeddings = model.predict_geometry_embedding(coors[:,:,0], coors[:,:,1], 
+            par, par_flag, shape_coors, shape_flag)
+        all_geo_embeddings.append(Geo_embeddings)
+    
+    all_geo_embeddings = torch.cat(tuple(all_geo_embeddings), 0)
+
+    return all_geo_embeddings
 
 # define the training function
 def train(args, config, model, device, loaders, num_nodes_list, params):
