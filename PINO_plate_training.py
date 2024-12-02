@@ -2,7 +2,7 @@ import torch
 import argparse
 import yaml
 
-from lib.model_plate import DCON, GANO
+from lib.model_plate import DCON, GANO, New_model_plate
 from lib.utils_plate_train import train
 from lib.utils_data import generate_plate_stress_data_loader
 
@@ -34,6 +34,8 @@ if args.model == 'DCON':
     model = DCON(config)
 if args.model == 'GANO':
     model = GANO(config)
+if args.model == 'self_defined':
+    model = New_model_plate(config)
 
 # extract the data
 train_loader, val_loader, test_loader, num_nodes_list, params = generate_plate_stress_data_loader(args, config)

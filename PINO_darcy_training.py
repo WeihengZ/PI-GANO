@@ -33,6 +33,8 @@ if args.model == 'DCON':
     model = PI_DCON(config)
 if args.model == 'GANO':
     model = PI_GANO(config)
+if args.model == 'self_defined':
+    model = New_model_darcy(config)
 
 # load the data
 train_loader, val_loader, test_loader, num_nodes_list = generate_darcy_data_loader(args, config)

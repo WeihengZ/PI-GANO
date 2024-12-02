@@ -740,3 +740,28 @@ class GANO_mul(nn.Module):
         v = torch.mean(v * enc, -1)    # (B, M)
         
         return u, v
+
+
+''' ------------------------- New model -------------------------------------------- '''
+
+class New_model_plate(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+
+  
+    def forward(self, x_coor, y_coor, par, par_flag, shape_coor, shape_flag):
+        '''
+        par: (B, M', 3)
+        par_flag: (B, M')
+        x_coor: (B, M)
+        y_coor: (B, M)
+        z_coor: (B, M)
+        shape_coor: (B, M'', 2)
+
+        return u, v: (B, M)
+        '''
+        u = None
+        v = None
+
+        return u, v

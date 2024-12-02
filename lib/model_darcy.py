@@ -494,3 +494,22 @@ class PI_GANO_geo(nn.Module):
         
         return u
 
+''' ------------------------- New model -------------------------- '''
+
+class New_model_darcy(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+
+    def forward(self, x_coor, y_coor, par, par_flag, shape_coor, shape_flag):
+        '''
+        par: (B, M', 3)
+        par_flag: (B, M')
+        x_coor: (B, M)
+        y_coor: (B, M)
+        z_coor: (B, M)
+
+        return u: (B, M)
+        '''
+        
+        return None

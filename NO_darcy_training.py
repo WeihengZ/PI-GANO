@@ -2,7 +2,7 @@ import torch
 import argparse
 import yaml
 
-from lib.model_darcy import PI_DCON, PI_GANO
+from lib.model_darcy import PI_DCON, PI_GANO, New_model_darcy
 from lib.utils_darcy_train import sup_train
 from lib.utils_data import generate_darcy_data_loader
 
@@ -33,6 +33,8 @@ if args.model == 'DCON':
     model = PI_DCON(config)
 if args.model == 'GANO':
     model = PI_GANO(config)
+if args.model == 'self_defined':
+    model = New_model_darcy(config)
 
 # load the data
 train_loader, val_loader, test_loader, num_nodes_list = generate_darcy_data_loader(args, config)
